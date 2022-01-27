@@ -43,8 +43,6 @@ const deleteBookMark = (url) => {
   if (index >= 0) {
     bookMarks.splice(index, 1);
   }
-  console.log(bookMarks);
-
   localStorage.setItem('bookMarks', JSON.stringify(bookMarks));
   refreshDOM();
 };
