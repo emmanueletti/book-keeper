@@ -32,6 +32,23 @@ const validateInput = (inputEl, errorClass) => {
   return true;
 };
 
+const refreshDOM = () => {
+  bookmarksContainer.innerHTML = '';
+  bookMarks.forEach((bookmark) => updateDOM(bookmark));
+};
+
+const deleteBookMark = (url) => {
+  const index = bookMarks.findIndex((bookmark) => bookmark.url === url);
+  console.log(index);
+  if (index >= 0) {
+    bookMarks.splice(index, 1);
+  }
+  console.log(bookMarks);
+
+  localStorage.setItem('bookMarks', JSON.stringify(bookMarks));
+  refreshDOM();
+};
+
 const buildBookMarkItem = (name, url) => {
   // Link
   const linkEl = document.createElement('a');
@@ -54,7 +71,7 @@ const buildBookMarkItem = (name, url) => {
   // Interesting way of adding event listeners to nodes right at the point of
   // creation. gets around the issue of having to create event listeners
   // anf trying to time it for when the items are in the DOM
-  iconEl.setAttribute('onclick', `deleteBookMark(${url})`);
+  iconEl.setAttribute('onclick', `deleteBookMark('${url}')`);
 
   // Item container
   const itemDiv = document.createElement('div');
@@ -69,7 +86,6 @@ const buildBookMarkItem = (name, url) => {
 
 const updateDOM = (bookMark) => {
   const { name, url } = bookMark;
-  console.log(name);
   bookmarksContainer.appendChild(buildBookMarkItem(name, url));
 };
 
