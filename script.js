@@ -32,6 +32,47 @@ const validateInput = (inputEl, errorClass) => {
   return true;
 };
 
+const buildBookMarkItem = (name, url) => {
+  // Link
+  const linkEl = document.createElement('a');
+  linkEl.href = url;
+  linkEl.target = '_blank';
+  linkEl.textContent = name;
+  // Favicon
+  const imageEl = document.createElement('img');
+  imageEl.src = `https://s2.googleusercontent.com/s2/favicons?domain=${url}`;
+  imageEl.alt = 'Link favicon';
+  // Name container
+  const nameDiv = document.createElement('div');
+  nameDiv.classList.add('name');
+  nameDiv.append(imageEl, linkEl);
+  // Close icon
+  const iconEl = document.createElement('i');
+  iconEl.classList.add('fas', 'fa-times');
+  iconEl.id = 'delete-bookmark';
+  iconEl.title = 'Delete Bookmark';
+  // Interesting way of adding event listeners to nodes right at the point of
+  // creation. gets around the issue of having to create event listeners
+  // anf trying to time it for when the items are in the DOM
+  iconEl.setAttribute('onclick', `deleteBookMark(${url})`);
+
+  // Item container
+  const itemDiv = document.createElement('div');
+  itemDiv.classList.add('item');
+  // Append can take mulitple node arguments, whereas appendchild can only take
+  // one at a time
+  itemDiv.append(iconEl, nameDiv);
+  // itemDiv.appendChild(nameDiv);
+
+  return itemDiv;
+};
+
+const updateDOM = (bookMark) => {
+  const { name, url } = bookMark;
+  console.log(name);
+  bookmarksContainer.appendChild(buildBookMarkItem(name, url));
+};
+
 const storeBookMark = (e) => {
   e.preventDefault();
   const [websiteNameInput, websiteURLInput] = e.target;
@@ -50,15 +91,16 @@ const storeBookMark = (e) => {
     url = `https://${url}`;
   }
 
-  const bookMark = {
+  const newBookMark = {
     name,
     url,
   };
-  bookMarks.push(bookMark);
+  bookMarks.push(newBookMark);
   // WHOA!! RESET A FORM METHOD
   localStorage.setItem('bookMarks', JSON.stringify(bookMarks));
   bookMarkForm.reset();
   websiteNameEl.focus();
+  updateDOM(newBookMark);
 };
 
 const initBookMarks = () => {
@@ -69,6 +111,9 @@ const initBookMarks = () => {
       url: 'https://emmanueletti.com',
     },
   ];
+  bookMarks.forEach((bookMark) => {
+    updateDOM(bookMark);
+  });
   localStorage.setItem('bookMarks', JSON.stringify(bookMarks));
 };
 
